@@ -1,5 +1,3 @@
-version: '3.0'
-
 services:
   # MySql Server
   mysqldb:
@@ -24,7 +22,7 @@ services:
     # Only start after MySql
     depends_on:
       - mysqldb
-    image: ansibleguy/ansibleforms:latest
+    image: ansibleguy/ansibleforms:7
     container_name: af_app
     restart: unless-stopped
     ports:

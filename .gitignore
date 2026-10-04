@@ -1,0 +1,27 @@
+# Runtime data the containers write into ./data. None of it belongs in git :
+# it holds the database, secrets, generated keys and per-install state.
+
+# MySQL database files
+data/mysql/db/
+
+# Settings saved from the web interface (holds secrets)
+data/.env
+data/.env.bak
+
+# Generated or installed at runtime
+data/certificates/
+data/logs/
+data/backups/
+data/form_backups/
+data/forms_backups/
+data/forms_staging/
+data/uploads/
+data/python/
+data/ansible/roles/
+data/ansible/collections/
+data/ansibleForms.lock
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/
