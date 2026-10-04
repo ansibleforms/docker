@@ -1,11 +1,13 @@
 # Intro
 
 > **Note:**  
-> This is for v6 only
+> This branch is for AnsibleForms 6. It pins the image to `ansibleguy/ansibleforms:6`, so it
+> keeps getting 6.x patch releases and never moves to 7. The `main` branch is the setup for
+> the current version.
 
 This project is a simple docker-compose to quickly get you started with AnsibleForms.
-The docker compose will spin up the mysql database and grab the latest AnsibleForms image from docker hub.
-It will install everything with defaults and present a dummy playbook as well as a demo forms.yaml file.
+The docker compose will spin up the mysql database and grab the latest AnsibleForms 6.x image from docker hub.
+It will install everything with defaults and present a dummy playbook as well as a demo config.yaml file and sample forms.
 The Ansibleforms image comes with Ansible and Python3 (and some galaxy collections), so apart from docker and docker compose there are no prerequisites.
 
 # How to Install
@@ -15,12 +17,11 @@ Simply follow the instructions on (https://ansibleforms.com)
 * sample maintenance playbooks
 * sample maintenance forms
 * dummy.yaml playbook
-* sample certificates (https)
 * sample custom functions to extend Ansible Forms.
 
 # K8S
 Searching for K8S install, find the helm install here.  
-(https://github.com/ansibleguy76/ansibleforms-helm)
+(https://github.com/ansibleforms/ansibleforms-helm)
 
 
 
