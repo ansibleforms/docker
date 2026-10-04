@@ -152,50 +152,21 @@
       required: true
       minValue: 0
       maxValue: 10
-    - type: table
+    - type: list
       name: member
       label: Add club members
       required: true
-      tableFields:
-      - name: firstname
-        label: First Name
-        type: text
-        required: true
-        default: ''
-        minLength: 2
-        regex:
-          expression: ^[a-zA-Z]*$
-          description: Must be normal characters
-        icon: user
-      - name: lastname
-        label: Last Name
-        type: text
-        required: true
-        default: ''
-        minLength: 5
-      - name: age
-        label: How old ?
-        type: number
-        required: true
-        default: 12
-        minValue: 12
-        maxValue: 80
-      - type: enum
-        name: food
-        label: Favorite food
-        default: veggies
-        values:
-          - pasta
-          - pizza
-          - fries
-          - steak
-          - veggies
-      - name: paid
-        label: membership
-        placeholder: Paid yet ?
-        type: checkbox
-        required: true
-        default: true
+      subform: Club member
+      columns:
+        - firstname
+        - lastname
+        - age
+        - food
+        - paid
+      titleAdd: Add member
+      titleEdit: Edit member
+      allowInsert: true
+      allowDelete: true
     - type: enum
       name: country
       model: country.name
@@ -329,3 +300,46 @@
       columns:
         - name
         - type
+- name: Club member
+  type: subform
+  description: One club member, used by the members list in the demo form
+  fields:
+    - name: firstname
+      label: First Name
+      type: text
+      required: true
+      default: ''
+      minLength: 2
+      regex:
+        expression: ^[a-zA-Z]*$
+        description: Must be normal characters
+      icon: user
+    - name: lastname
+      label: Last Name
+      type: text
+      required: true
+      default: ''
+      minLength: 5
+    - name: age
+      label: How old ?
+      type: number
+      required: true
+      default: 12
+      minValue: 12
+      maxValue: 80
+    - type: enum
+      name: food
+      label: Favorite food
+      default: veggies
+      values:
+        - pasta
+        - pizza
+        - fries
+        - steak
+        - veggies
+    - name: paid
+      label: membership
+      placeholder: Paid yet ?
+      type: checkbox
+      required: true
+      default: true
