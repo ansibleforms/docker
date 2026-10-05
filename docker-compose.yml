@@ -52,5 +52,9 @@ services:
       - ./data/ansible/ansible.cfg:/etc/ansible/ansible.cfg # custom ansible.cfg
       - ./data/ansible/roles:/etc/ansible/roles             # custom ansible roles
       - ./data/ansible/collections:/etc/ansible/collections # custom ansible collections
+      # Custom functions: the app reads these from its source folder, not from the persistent
+      # folder above, so they are mounted over the copies in the image.
+      - ./data/functions/custom.js:/app/dist/src/functions/custom.js                         # custom JavaScript functions (fnc.*)
+      - ./data/functions/jq.custom.definitions:/app/dist/src/functions/jq.custom.definitions # custom jq definitions
       # - ./data/assets/images:/app/dist/views/img          # 6 custom images (login_background_%theme%.jpg and logo_%theme%.svg | 2 for each theme = light, dark and color)
 
