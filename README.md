@@ -1,12 +1,13 @@
 # Intro
 
 > **Note:**  
-> This branch is for AnsibleForms 6. It pins the image to `ansibleguy/ansibleforms:6`, so it
+> This branch is for AnsibleForms 6. It pins the image to `ghcr.io/ansibleforms/ansibleforms:6`, so it
 > keeps getting 6.x patch releases and never moves to 7. The `main` branch is the setup for
 > the current version.
 
 This project is a simple docker-compose to quickly get you started with AnsibleForms.
-The docker compose will spin up the mysql database and grab the latest AnsibleForms 6.x image from docker hub.
+The docker compose will spin up the mysql database and grab the latest AnsibleForms 6.x image from the GitHub Container Registry.
+The same image is also on Docker Hub as `ansibleguy/ansibleforms`. Use that name instead if you prefer.
 It will install everything with defaults and present a dummy playbook as well as a demo config.yaml file and sample forms.
 The Ansibleforms image comes with Ansible and Python3 (and some galaxy collections), so apart from docker and docker compose there are no prerequisites.
 
