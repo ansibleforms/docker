@@ -4,21 +4,20 @@
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-ansibleforms.com-informational)](https://ansibleforms.com)
 
-A Docker Compose setup that runs [AnsibleForms](https://github.com/ansibleforms/ansibleforms) 7 with its MySQL
+A Docker Compose setup that runs [AnsibleForms](https://github.com/ansibleforms/ansibleforms) with its MySQL
 database, sample playbooks and sample forms, so docker and docker compose are all you need to get started.
 The full installation guide is at [ansibleforms.com](https://ansibleforms.com/installation).
 
 ## Versions
 
-Each branch pins one AnsibleForms major, so a setup never jumps to a new major on its own.
-Coming from 6? Read [Upgrading to 7](https://ansibleforms.com/upgrade-7) first.
+Each branch pins one AnsibleForms major, so a setup never jumps on its own; read [Upgrading to 7](https://ansibleforms.com/upgrade-7) before moving up.
 
 | Branch | Image |
 |---|---|
 | `main` | `ghcr.io/ansibleforms/ansibleforms:7` |
 | [`v6`](https://github.com/ansibleforms/docker/tree/v6) | `ghcr.io/ansibleforms/ansibleforms:6` |
 
-Images are published to the GitHub Container Registry only; `ansibleguy/ansibleforms` on Docker Hub is no longer updated.
+Images live on GHCR only; `ansibleguy/ansibleforms` on Docker Hub is no longer updated.
 
 ## Getting started
 
