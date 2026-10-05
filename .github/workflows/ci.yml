@@ -2,9 +2,9 @@ name: CI
 
 # Starts the stack exactly as a user does (docker compose up with the committed .env and
 # data/) and logs in through the API. A green run means the compose file is valid, the
-# pinned images pull and start together, the app reaches its database and creates its
-# schema, and the sample data does not stop it from booting. That is what a Dependabot
-# bump of the MySQL image has to prove before it is merged.
+# pinned images pull and start together, the app reaches its database without waiting for
+# it and creates its schema, and the sample data does not stop it from booting. That is
+# what a Dependabot bump of the MySQL image has to prove before it is merged.
 
 on:
   pull_request:
@@ -40,6 +40,14 @@ jobs:
           done
           echo "::error::The app did not accept the admin login within 5 minutes."
           exit 1
+
+      - name: The app never had to wait for its database
+        run: |
+          # the app only starts once MySQL is healthy, so it connects on the first try
+          if docker compose logs --no-color app | grep -E 'ECONNREFUSED|Mysql not ready'; then
+            echo "::error::The app started before MySQL accepted connections."
+            exit 1
+          fi
 
       - name: Logs
         if: always()
