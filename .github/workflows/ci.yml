@@ -2,9 +2,9 @@ name: CI
 
 # Starts the stack exactly as a user does (docker compose up with the committed .env and
 # data/) and logs in through the API. A green run means the compose file is valid, the
-# pinned images pull and start together, the app reaches its database and creates its
-# schema without waiting for it, and the sample data does not stop it from booting. That is what a Dependabot
-# bump of the MySQL image has to prove before it is merged.
+# pinned images pull and start together, the app reaches its database without waiting for
+# it and creates its schema, and the sample data does not stop it from booting. That is
+# what a Dependabot bump of the MySQL image has to prove before it is merged.
 
 on:
   pull_request:
