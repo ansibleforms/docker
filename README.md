@@ -22,7 +22,7 @@ Simply follow the instructions on (https://ansibleforms.com)
 
 # K8S
 Searching for K8S install, find the helm install here.  
-(https://github.com/ansibleforms/ansibleforms-helm)
+(https://github.com/ansibleforms/helm-charts)
 
 
 
