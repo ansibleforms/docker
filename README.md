@@ -1,29 +1,53 @@
-# Intro
+# AnsibleForms Docker Compose
 
-> **Note:**  
-> This is the setup for AnsibleForms 7. It pins the image to `ghcr.io/ansibleforms/ansibleforms:7`, so it
-> gets every 7.x release and never jumps to a new major version on its own. For AnsibleForms 6,
-> use the [`v6` branch](https://github.com/ansibleforms/docker/tree/v6). Coming from 6? Read
-> [Upgrading to 7](https://ansibleforms.com/upgrade-7) first.
+[![CI](https://img.shields.io/github/actions/workflow/status/ansibleforms/docker/ci.yml?branch=main&label=CI)](https://github.com/ansibleforms/docker/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-ansibleforms.com-informational)](https://ansibleforms.com)
 
-This project is a simple docker-compose to quickly get you started with AnsibleForms.
-The docker compose will spin up the mysql database and grab the latest AnsibleForms 7.x image from the GitHub Container Registry.
-Images are published there only: the old Docker Hub repository (`ansibleguy/ansibleforms`) is no longer updated.
-It will install everything with defaults and present a dummy playbook as well as a demo config.yaml file and sample forms.
-The Ansibleforms image comes with Ansible and Python3 (and some galaxy collections), so apart from docker and docker compose there are no prerequisites.
+A Docker Compose setup that runs [AnsibleForms](https://github.com/ansibleforms/ansibleforms) 7 with its MySQL
+database, sample playbooks and sample forms, so docker and docker compose are all you need to get started.
+The full installation guide is at [ansibleforms.com](https://ansibleforms.com/installation).
 
-# How to Install
-Simply follow the instructions on (https://ansibleforms.com)
+## Versions
 
-# Data Contents
-* sample maintenance playbooks
-* sample maintenance forms
-* dummy.yaml playbook
-* sample custom functions to extend Ansible Forms.
+Each branch pins one AnsibleForms major, so a setup never jumps to a new major on its own.
+Coming from 6? Read [Upgrading to 7](https://ansibleforms.com/upgrade-7) first.
 
-# K8S
-Searching for K8S install, find the helm install here.  
-(https://github.com/ansibleforms/helm-charts)
+| Branch | Image |
+|---|---|
+| `main` | `ghcr.io/ansibleforms/ansibleforms:7` |
+| [`v6`](https://github.com/ansibleforms/docker/tree/v6) | `ghcr.io/ansibleforms/ansibleforms:6` |
 
+Images are published to the GitHub Container Registry only; `ansibleguy/ansibleforms` on Docker Hub is no longer updated.
 
+## Getting started
 
+Clone the repository, review the settings in `.env` (change every password), and start the stack.
+The app then listens on https://localhost with a self-signed certificate; log in as `admin`.
+
+```bash
+git clone https://github.com/ansibleforms/docker.git ansibleforms
+cd ansibleforms
+docker compose up -d
+```
+
+## What you get
+
+Everything under `data/` is mounted into the containers and survives a restart or an upgrade.
+
+- A demo `config.yaml` with categories, roles and constants, and sample forms
+- Sample maintenance playbooks and a `dummy.yaml` playbook
+- Sample custom JavaScript functions and jq definitions to extend AnsibleForms
+- Ansible, Python 3 and a set of Galaxy collections inside the image
+
+## Kubernetes
+
+For Kubernetes, use the Helm chart in [ansibleforms/helm-charts](https://github.com/ansibleforms/helm-charts) instead.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues as [SECURITY.md](SECURITY.md) describes.
+
+## License
+
+[GPL-3.0](LICENSE).
