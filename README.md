@@ -46,7 +46,10 @@ For Kubernetes, use the Helm chart in [ansibleforms/helm-charts](https://github.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues as [SECURITY.md](SECURITY.md) describes.
+Contributions are welcome. Start with these files:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md): how to propose a change and open a pull request
+- [SECURITY.md](SECURITY.md): how to report a security issue
 
 ## License
 
