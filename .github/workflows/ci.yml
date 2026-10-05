@@ -1,0 +1,67 @@
+name: CI
+
+# Starts the stack exactly as a user does (docker compose up with the committed .env and
+# data/) and logs in through the API. A green run means the compose file is valid, the
+# pinned images pull and start together, the app reaches its database and creates its
+# schema, and the sample data does not stop it from booting. That is what a Dependabot
+# bump of the MySQL image has to prove before it is merged.
+
+on:
+  pull_request:
+  push:
+    branches: [main, v6]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compose:
+    name: Compose
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: The compose file is valid
+        run: docker compose config --quiet
+
+      - name: Start the stack
+        run: docker compose up -d
+
+      - name: The app answers and the admin can log in
+        run: |
+          set -euo pipefail
+          # first start creates the schema, so give it a few minutes
+          for i in $(seq 1 60); do
+            if curl -fsSk -X POST -u 'admin:AnsibleForms!123' https://localhost/api/v2/auth/login -o login.json; then
+              grep -q '"token"' login.json && { echo "Logged in after $((i * 5)) seconds."; exit 0; }
+            fi
+            sleep 5
+          done
+          echo "::error::The app did not accept the admin login within 5 minutes."
+          exit 1
+
+      - name: Logs
+        if: always()
+        run: docker compose logs --no-color
+
+      - name: Stop the stack
+        if: always()
+        run: docker compose down --volumes
+
+  # The one check the ruleset requires, so a job added later is covered without
+  # changing the ruleset. This passes only when every job did.
+  passed:
+    name: CI passed
+    if: always()
+    needs: [compose]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Job results: $RESULTS"
+          for result in $RESULTS; do
+            [ "$result" = "success" ] || { echo "::error::A CI job ended with '$result'."; exit 1; }
+          done
