@@ -7,7 +7,7 @@
 
 This project is a simple docker-compose to quickly get you started with AnsibleForms.
 The docker compose will spin up the mysql database and grab the latest AnsibleForms 6.x image from the GitHub Container Registry.
-The same image is also on Docker Hub as `ansibleguy/ansibleforms`. Use that name instead if you prefer.
+Images are published there only: the old Docker Hub repository (`ansibleguy/ansibleforms`) is no longer updated.
 It will install everything with defaults and present a dummy playbook as well as a demo config.yaml file and sample forms.
 The Ansibleforms image comes with Ansible and Python3 (and some galaxy collections), so apart from docker and docker compose there are no prerequisites.
 
