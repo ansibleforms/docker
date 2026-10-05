@@ -1,10 +1,10 @@
 version: 2
 
-# Keeps the images in docker-compose.yml up to date, on main (AnsibleForms 7) and on the
-# v6 branch (AnsibleForms 6). Updates are never grouped : every image gets its own pull
+# Keeps the images in docker-compose.yml and the workflow actions up to date, on main
+# (AnsibleForms 7) and on the v6 branch (AnsibleForms 6). Updates are never grouped : every image gets its own pull
 # request, so each one can be reviewed and reverted on its own.
 #
-# Major versions are ignored on purpose. A new AnsibleForms major gets its own branch
+# Image major versions are ignored on purpose. A new AnsibleForms major gets its own branch
 # setup rather than an image bump, and a MySQL major (8.4 LTS to 9.x) is a database
 # upgrade to plan, not a routine pull request.
 
@@ -31,3 +31,20 @@ updates:
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
+
+  # Action majors are taken : CI starts the whole stack on every pull request, so a
+  # breaking action fails there before it merges.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: v6
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
