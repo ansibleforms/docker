@@ -19,9 +19,9 @@ The setup is a compose file, its settings and the data the containers start with
 
 | Path | Holds |
 |---|---|
-| `docker-compose.yml` | the AnsibleForms and MySQL containers and their volumes |
+| `docker-compose.yml` | the AnsibleForms, RTE and MySQL containers and their volumes |
 | `.env` | the settings, with sample values that work out of the box |
-| `data/` | what AnsibleForms and MySQL start with: config, sample forms and playbooks, custom functions, ansible and git settings |
+| `data/` | what AnsibleForms and MySQL start with: config, sample forms and playbooks, custom functions, ansible and git settings, and the config seed that registers the RTE |
 
 What the containers write at runtime (the database, logs, backups, keys) also lands in
 `data/`, and `.gitignore` keeps it out of git.

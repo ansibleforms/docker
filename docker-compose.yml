@@ -47,8 +47,8 @@ services:
       - DB_PASSWORD=$MYSQLDB_PASSWORD
       - DB_PORT=$MYSQLDB_DOCKER_PORT
       - PORT=$WEBAPP_DOCKER_PORT
-      # adding python path to add our custom persistent lib location
-      - PYTHONPATH=/usr/lib/python311.zip:/usr/lib/python3.11:/usr/lib/python3.11/lib-dynload:/usr/lib/python3.11/site-packages:/app/dist/persistent/python/lib      
+      # The config seed registers the RTE below as the default runner (data/seed.yaml)
+      - CONFIG_SEED_PATH=/app/dist/persistent/seed.yaml
     # allow interactive shell
     stdin_open: true
     # allow terminal
@@ -58,12 +58,44 @@ services:
       - ./data:/app/dist/persistent                         # persistent app data
       - ./data/ssh:$HOME_DIR/.ssh                           # persistent ssh keys
       - ./data/git/.gitconfig:$HOME_DIR/.gitconfig          # custom git config
-      - ./data/ansible/ansible.cfg:/etc/ansible/ansible.cfg # custom ansible.cfg
-      - ./data/ansible/roles:/etc/ansible/roles             # custom ansible roles
-      - ./data/ansible/collections:/etc/ansible/collections # custom ansible collections
       # Custom functions: the app reads these from its source folder, not from the persistent
       # folder above, so they are mounted over the copies in the image.
       - ./data/functions/custom.js:/app/dist/src/functions/custom.js                         # custom JavaScript functions (fnc.*)
       - ./data/functions/jq.custom.definitions:/app/dist/src/functions/jq.custom.definitions # custom jq definitions
       # - ./data/assets/images:/app/dist/views/img          # 6 custom images (login_background_%theme%.jpg and logo_%theme%.svg | 2 for each theme = light, dark and color)
-
+  # AnsibleForms RTE (runtime environment): runs the playbooks. AnsibleForms 7 runs none in
+  # the app itself, so this is where ansible, the Python libraries and the collections live.
+  # The app reaches it on http://rte:8000 with RTE_TOKEN; it is not published on the host.
+  rte:
+    # Only start once the app is healthy: it creates the schema on the first start, and an
+    # RTE that finds no schema stops working without exiting, so a restart would not help
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    image: ghcr.io/ansibleforms/ansibleforms-rte:7
+    container_name: af_rte
+    restart: unless-stopped
+    # Load extra environment variables from file (the database, ENCRYPTION_SECRET, RTE_TOKEN)
+    env_file:
+      - ./.env
+    # Set environment variables
+    environment:
+      - DB_HOST=mysqldb
+      - DB_USER=$MYSQLDB_USER
+      - DB_PASSWORD=$MYSQLDB_PASSWORD
+      - DB_PORT=$MYSQLDB_DOCKER_PORT
+      - PORT=8000
+      # Only the app calls it, inside the compose network
+      - HTTPS=0
+      # The libraries the ansibleforms_pip_install playbook installs into the persistent folder
+      - PYTHONPATH=/app/dist/persistent/python/lib
+    volumes:
+      # The same folders as the app: playbooks, repositories, uploads and the SSH key
+      - ./data:/app/dist/persistent                         # persistent app data
+      - ./data/ssh:$HOME_DIR/.ssh                           # persistent ssh keys
+      - ./data/git/.gitconfig:$HOME_DIR/.gitconfig          # custom git config
+      - ./data/ansible/ansible.cfg:/etc/ansible/ansible.cfg # custom ansible.cfg
+      - ./data/ansible/roles:/etc/ansible/roles             # custom ansible roles
+      - ./data/ansible/collections:/etc/ansible/collections # custom ansible collections
