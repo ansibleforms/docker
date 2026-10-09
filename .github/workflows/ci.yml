@@ -1,9 +1,10 @@
 name: CI
 
 # Starts the stack exactly as a user does (docker compose up with the committed .env and
-# data/) and logs in through the API. A green run means the compose file is valid, the
-# pinned images pull and start together, the app reaches its database without waiting for
-# it and creates its schema, and the sample data does not stop it from booting. That is
+# data/), logs in through the API and runs the demo playbook on the RTE. A green run means
+# the compose file is valid, the pinned images pull and start together, the app reaches
+# its database without waiting for it and creates its schema, the sample data does not stop
+# it from booting, and the seed hands playbooks to the RTE. That is
 # what a Dependabot bump of the MySQL image has to prove before it is merged.
 
 on:
@@ -40,6 +41,39 @@ jobs:
           done
           echo "::error::The app did not accept the admin login within 5 minutes."
           exit 1
+
+      # AnsibleForms 7 runs no playbook itself: the rte container does, registered as the
+      # default runner by data/seed.yaml. Launch the demo playbook form and wait for its output.
+      - name: A playbook runs on the RTE
+        run: |
+          set -euo pipefail
+          URL=https://localhost
+          token="$(curl -fsSk -X POST -u 'admin:AnsibleForms!123' "$URL/api/v2/auth/login" | jq -r .token)"
+          auth=(-H "Authorization: Bearer $token" -H "Content-Type: application/json")
+          runner="$(curl -fsSk "${auth[@]}" "$URL/api/v2/runner" | jq -c '.records[] | select(.type == "rte" and .is_default == 1)')"
+          [ -n "$runner" ] || { echo "::error::data/seed.yaml registered no default rte runner."; exit 1; }
+          echo "Runner: $runner"
+          # the RTE starts once the app is healthy, so give it a moment to listen
+          check=""
+          for i in $(seq 1 30); do
+            check="$(curl -fsSk "${auth[@]}" -X POST "$URL/api/v2/runner/$(jq -r .id <<<"$runner")/check" || true)"
+            [ -n "$check" ] && break
+            sleep 5
+          done
+          [ -n "$check" ] || { echo "::error::The app cannot reach the RTE."; exit 1; }
+          echo "Test connection: $check"
+          id="$(curl -fsSk "${auth[@]}" -X POST "$URL/api/v2/job" -d '{"formName":"Demo Form Ansible No input","extravars":{}}' | jq -r .id)"
+          for i in $(seq 1 60); do
+            job="$(curl -fsSk "${auth[@]}" "$URL/api/v2/job/$id")"
+            status="$(jq -r .status <<<"$job")"
+            case "$status" in running|approve) sleep 3 ;; *) break ;; esac
+          done
+          output="$(jq -r .output <<<"$job")"
+          echo "Job $id ended $status"
+          [ "$status" = success ] || { echo "::error::The playbook job ended $status."; echo "$output"; exit 1; }
+          grep -q "Running on RTE" <<<"$output" || { echo "::error::The job did not run on the RTE."; exit 1; }
+          grep -q "Hi there and welcome to ansible" <<<"$output" || { echo "::error::The playbook output is missing."; exit 1; }
+          echo "The playbook ran on the RTE."
 
       - name: The app never had to wait for its database
         run: |

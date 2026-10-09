@@ -37,7 +37,17 @@ Everything under `data/` is mounted into the containers and survives a restart o
 - A demo `config.yaml` with categories, roles and constants, and sample forms
 - Sample maintenance playbooks and a `dummy.yaml` playbook
 - Sample custom JavaScript functions and jq definitions to extend AnsibleForms
-- Ansible, Python 3 and a set of Galaxy collections inside the image
+- An RTE container that runs the playbooks, with ansible, Python 3 and a set of Galaxy collections
+- A config seed, `data/seed.yaml`, that registers the RTE as the default runner
+
+## Running playbooks
+
+AnsibleForms 7 runs no playbook in the app: the `rte` container runs them, from
+`ghcr.io/ansibleforms/ansibleforms-rte:7`. The app reaches it on `http://rte:8000` with `RTE_TOKEN` from `.env`.
+
+`data/seed.yaml` registers it as the default runner on every start, so it is read-only under Connections > Runners.
+Ansible settings, roles and collections under `data/ansible/` are mounted into the RTE, not the app. When your
+playbooks need more, build an image from the app's `Dockerfile.rte` and point the `rte` service at it.
 
 ## Kubernetes
 

@@ -1,0 +1,12 @@
+# Config seed, applied by the app at every start (CONFIG_SEED_PATH in docker-compose.yml).
+# It registers the rte container as the default runner, so playbook forms run there. Objects
+# declared here are read-only in the interface; see https://ansibleforms.com/seed.
+version: 1
+runners:
+  items:
+    - name: rte
+      type: rte
+      description: The rte container of docker-compose.yml
+      uri: http://rte:8000
+      token: ${RTE_TOKEN}
+      is_default: true
