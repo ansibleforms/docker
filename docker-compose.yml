@@ -49,6 +49,15 @@ services:
       - PORT=$WEBAPP_DOCKER_PORT
       # The config seed registers the RTE below as the default runner (data/seed.yaml)
       - CONFIG_SEED_PATH=/app/dist/persistent/seed.yaml
+    # Healthy once the app answers on its port, which it only opens after creating the schema
+    # and applying the seed. Declared here rather than left to the image's HEALTHCHECK: Podman
+    # ignores that for OCI images, so the app never turned healthy and the rte never started.
+    healthcheck:
+      test: ["CMD", "node", "./healthcheck.js"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
     # allow interactive shell
     stdin_open: true
     # allow terminal
@@ -77,6 +86,13 @@ services:
     image: ghcr.io/ansibleforms/ansibleforms-rte:7
     container_name: af_rte
     restart: unless-stopped
+    # Healthy once the RTE takes connections on its port (its API needs the token)
+    healthcheck:
+      test: ["CMD", "node", "./healthcheck.js"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
     # Load extra environment variables from file (the database, ENCRYPTION_SECRET, RTE_TOKEN)
     env_file:
       - ./.env
