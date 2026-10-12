@@ -17,8 +17,6 @@ data/forms_backups/
 data/forms_staging/
 data/uploads/
 data/python/
-data/ansible/roles/
-data/ansible/collections/
 data/ansibleForms.lock
 
 # Editor and OS files
