@@ -46,13 +46,33 @@ jobs:
           echo "::error::The app did not accept the admin login within 5 minutes."
           exit 1
 
+      # A login with the public default password may only change it: every other call answers
+      # 403 password_change_required until then. The later steps log in with $ADMIN_PASSWORD.
+      - name: The admin replaces the default password
+        run: |
+          set -euo pipefail
+          URL=https://localhost
+          token="$(curl -fsSk -X POST -u 'admin:AnsibleForms!123' "$URL/api/v2/auth/login" | jq -r .token)"
+          auth=(-H "Authorization: Bearer $token" -H "Content-Type: application/json")
+          if curl -sSk "${auth[@]}" "$URL/api/v2/runner" | grep -q '"password_change_required"'; then
+            curl -fsSk "${auth[@]}" -X PUT "$URL/api/v2/profile" \
+              -d '{"password":"CI!Admin!Password!7","currentPassword":"AnsibleForms!123"}' >/dev/null
+            # tokens issued in the second of the change still count as before it
+            sleep 2
+            echo 'ADMIN_PASSWORD=CI!Admin!Password!7' >> "$GITHUB_ENV"
+            echo "Changed the default password."
+          else
+            echo 'ADMIN_PASSWORD=AnsibleForms!123' >> "$GITHUB_ENV"
+            echo "The app did not ask for a new password."
+          fi
+
       # AnsibleForms 7 runs no playbook itself: the rte container does, registered as the
       # default runner by data/seed.yaml. Launch the demo playbook form and wait for its output.
       - name: A playbook runs on the RTE
         run: |
           set -euo pipefail
           URL=https://localhost
-          token="$(curl -fsSk -X POST -u 'admin:AnsibleForms!123' "$URL/api/v2/auth/login" | jq -r .token)"
+          token="$(curl -fsSk -X POST -u "admin:$ADMIN_PASSWORD" "$URL/api/v2/auth/login" | jq -r .token)"
           auth=(-H "Authorization: Bearer $token" -H "Content-Type: application/json")
           runner="$(curl -fsSk "${auth[@]}" "$URL/api/v2/runner" | jq -c '.records[] | select(.type == "rte" and .is_default == 1)')"
           [ -n "$runner" ] || { echo "::error::data/seed.yaml registered no default rte runner."; exit 1; }

@@ -22,7 +22,8 @@ Images live on GHCR only; `ansibleguy/ansibleforms` on Docker Hub is no longer u
 ## Getting started
 
 Clone the repository, review the settings in `.env` (change every password), and start the stack.
-The app then listens on https://localhost with a self-signed certificate; log in as `admin`.
+The app then listens on https://localhost with a self-signed certificate; log in as `admin` with the `ADMIN_PASSWORD`
+of `.env`. While that is still the public default, `AnsibleForms!123`, the app first asks you to choose a new password.
 
 ```bash
 git clone https://github.com/ansibleforms/docker.git ansibleforms
