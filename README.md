@@ -40,6 +40,20 @@ Everything under `data/` is mounted into the containers and survives a restart o
 - An RTE container that runs the playbooks, with ansible, Python 3 and a set of Galaxy collections
 - A config seed, `data/seed.yaml`, that registers the RTE as the default runner
 
+## Database
+
+The app and the RTE connect to MySQL as `ansibleforms` (`MYSQLDB_USER` in `.env`), with all rights on the `AnsibleForms`
+schema and none elsewhere: a hole in the app then stays a hole in its own data. Root (`MYSQLDB_ROOT_PASSWORD`) is for MySQL.
+
+MySQL creates that user on its first start only. An install that has connected as root so far keeps its database, so
+create the user once, with the password you set in `MYSQLDB_PASSWORD`, before you start it with this `.env`:
+
+```bash
+docker compose up -d mysqldb
+docker compose exec mysqldb mysql -uroot -p -e "CREATE USER 'ansibleforms'@'%' IDENTIFIED BY '<MYSQLDB_PASSWORD>';
+  GRANT ALL PRIVILEGES ON AnsibleForms.* TO 'ansibleforms'@'%';"
+```
+
 ## Running playbooks
 
 AnsibleForms 7 runs no playbook in the app: the `rte` container runs them, from
