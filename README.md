@@ -43,7 +43,7 @@ Everything under `data/` is mounted into the containers and survives a restart o
 ## Running playbooks
 
 AnsibleForms 7 runs no playbook in the app: the `rte` container runs them, from
-`ghcr.io/ansibleforms/ansibleforms-rte:7`. The app reaches it on `http://rte:8000` with `RTE_TOKEN` from `.env`.
+`ghcr.io/ansibleforms/ansibleforms-rte-full:7`. The app reaches it on `http://rte:8000` with `RTE_TOKEN` from `.env`.
 
 `data/seed.yaml` registers it as the default runner on every start, so it is read-only under Connections > Runners.
 Ansible settings, roles and collections under `data/ansible/` are mounted into the RTE, not the app. When your

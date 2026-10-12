@@ -83,7 +83,7 @@ services:
         condition: service_healthy
       app:
         condition: service_healthy
-    image: ghcr.io/ansibleforms/ansibleforms-rte:7
+    image: ghcr.io/ansibleforms/ansibleforms-rte-full:7
     container_name: af_rte
     restart: unless-stopped
     # Healthy once the RTE takes connections on its port (its API needs the token)
