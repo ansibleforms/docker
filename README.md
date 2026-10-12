@@ -47,7 +47,8 @@ AnsibleForms 7 runs no playbook in the app: the `rte` container runs them, from
 
 `data/seed.yaml` registers it as the default runner on every start, so it is read-only under Connections > Runners.
 Ansible settings, roles and collections under `data/ansible/` are mounted into the RTE, not the app. When your
-playbooks need more, build an image from the app's `Dockerfile.rte` and point the `rte` service at it.
+playbooks need more, build an image FROM `ansibleforms-rte-core` or `ansibleforms-rte-full` and point the `rte` service
+at it: the app's [examples/rte](https://github.com/ansibleforms/ansibleforms/tree/main/examples/rte) shows how.
 
 ## Kubernetes
 
