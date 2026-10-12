@@ -27,8 +27,12 @@ The app then listens on https://localhost with a self-signed certificate; log in
 ```bash
 git clone https://github.com/ansibleforms/docker.git ansibleforms
 cd ansibleforms
+sudo chown -R 1000:1000 data
 docker compose up -d
 ```
+
+The app and the RTE run as the user `node` (uid 1000), so they need to own `data/`: that is what the `chown` is for.
+Coming from 6, whose container ran as root, run the same `chown` once before you start 7; MySQL takes its own folder back when it starts.
 
 ## What you get
 
