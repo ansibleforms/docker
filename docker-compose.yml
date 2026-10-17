@@ -79,37 +79,32 @@ services:
       # - ./data/assets/images:/app/dist/views/img          # 6 custom images (login_background_%theme%.jpg and logo_%theme%.svg | 2 for each theme = light, dark and color)
   # AnsibleForms RTE (runtime environment): runs the playbooks. AnsibleForms 7 runs none in
   # the app itself, so this is where ansible, the Python libraries and the collections live.
-  # The app reaches it on http://rte:8000 with RTE_TOKEN; it is not published on the host.
+  # The app dials it on http://rte:8000 with RTE_TOKEN (RTE_MODE=inbound) and keeps one WebSocket
+  # open : the RTE holds no database credentials and is not published on the host.
   rte:
-    # Only start once the app is healthy: it creates the schema on the first start, and an
-    # RTE that finds no schema stops working without exiting, so a restart would not help
-    depends_on:
-      mysqldb:
-        condition: service_healthy
-      app:
-        condition: service_healthy
     image: ghcr.io/ansibleforms/ansibleforms-rte-full:7
     container_name: af_rte
     restart: unless-stopped
-    # Healthy once the RTE takes connections on its port (its API needs the token)
+    # Healthy once the RTE takes connections on its port (its socket needs the token)
     healthcheck:
       test: ["CMD", "node", "./healthcheck.js"]
       interval: 10s
       timeout: 5s
       retries: 30
       start_period: 30s
-    # Load extra environment variables from file (the database, ENCRYPTION_SECRET, RTE_TOKEN)
-    env_file:
-      - ./.env
-    # Set environment variables
+    # Only what the RTE needs : not the .env, which holds the database's passwords
     environment:
-      - DB_HOST=mysqldb
-      - DB_USER=$MYSQLDB_USER
-      - DB_PASSWORD=$MYSQLDB_PASSWORD
-      - DB_PORT=$MYSQLDB_DOCKER_PORT
+      # The app dials it (data/seed.yaml declares its runner, rte_mode inbound)
+      - NODE_ENV=production
+      - RTE_MODE=inbound
+      - RTE_TOKEN=$RTE_TOKEN
+      # Its files are the app's own (./data, mounted below) : nothing to send with each job
+      - RTE_FILES=local
       - PORT=8000
       # Only the app calls it, inside the compose network
       - HTTPS=0
+      - LOG_LEVEL=$LOG_LEVEL
+      - LOG_CONSOLE_LEVEL=$LOG_CONSOLE_LEVEL
       # The libraries the ansibleforms_pip_install playbook installs into the persistent folder
       - PYTHONPATH=/app/dist/persistent/python/lib
     volumes:

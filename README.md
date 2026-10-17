@@ -49,7 +49,7 @@ Everything under `data/` is mounted into the containers and survives a restart o
 
 ## Database
 
-The app and the RTE connect to MySQL as `ansibleforms` (`MYSQLDB_USER` in `.env`), with all rights on the `AnsibleForms`
+The app connects to MySQL as `ansibleforms` (`MYSQLDB_USER` in `.env`), with all rights on the `AnsibleForms`
 schema and none elsewhere: a hole in the app then stays a hole in its own data. Root (`MYSQLDB_ROOT_PASSWORD`) is for MySQL.
 
 MySQL creates that user on its first start only. An install that has connected as root so far keeps its database, so
@@ -64,7 +64,8 @@ docker compose exec mysqldb mysql -uroot -p -e "CREATE USER 'ansibleforms'@'%' I
 ## Running playbooks
 
 AnsibleForms 7 runs no playbook in the app: the `rte` container runs them, from
-`ghcr.io/ansibleforms/ansibleforms-rte-full:7`. The app reaches it on `http://rte:8000` with `RTE_TOKEN` from `.env`.
+`ghcr.io/ansibleforms/ansibleforms-rte-full:7`. The app dials it on `http://rte:8000` with `RTE_TOKEN` from `.env` and keeps
+one WebSocket open (`RTE_MODE=inbound`): the RTE gets no database credentials, and is not published on the host.
 
 `data/seed.yaml` registers it as the default runner on every start, so it is read-only under Connections > Runners.
 Ansible settings, roles and collections under `data/ansible/` are mounted into the RTE, not the app. When your
