@@ -17,6 +17,9 @@ data/forms_backups/
 data/forms_staging/
 data/uploads/
 data/python/
+# The RTE's job spool and the files cache of RTE_FILES=transfer (created in either mode)
+data/rte-spool/
+data/rte-files/
 data/ansibleForms.lock
 
 # Editor and OS files

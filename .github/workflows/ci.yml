@@ -77,7 +77,7 @@ jobs:
           runner="$(curl -fsSk "${auth[@]}" "$URL/api/v2/runner" | jq -c '.records[] | select(.type == "rte" and .is_default == 1)')"
           [ -n "$runner" ] || { echo "::error::data/seed.yaml registered no default rte runner."; exit 1; }
           echo "Runner: $runner"
-          # the RTE starts once the app is healthy, so give it a moment to listen
+          # the RTE starts beside the app, and the app dials it once both are up, so give it a moment
           check=""
           for i in $(seq 1 30); do
             check="$(curl -fsSk "${auth[@]}" -X POST "$URL/api/v2/runner/$(jq -r .id <<<"$runner")/check" || true)"
