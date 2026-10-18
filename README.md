@@ -17,6 +17,8 @@ Each branch pins one AnsibleForms major, so a setup never jumps on its own; read
 | `main` | `ghcr.io/ansibleforms/ansibleforms:7` |
 | [`v6`](https://github.com/ansibleforms/docker/tree/v6) | `ghcr.io/ansibleforms/ansibleforms:6` |
 
+Every AnsibleForms release also tags this repository as `vX.Y.Z`, so the setup of a version can be taken exactly as it was.
+
 Images live on GHCR only; `ansibleguy/ansibleforms` on Docker Hub is no longer updated.
 
 ## Getting started

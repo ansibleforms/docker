@@ -1,0 +1,61 @@
+name: Tag app release
+
+# Tags this repository with every AnsibleForms release, so a setup can be taken exactly as it
+# was for a version: the AnsibleForms installer fetches the compose file and the data of
+# v<version>, and falls back to the branch of its major when there is no such tag.
+#
+# When the app releases, its release workflow sends an app-release repository_dispatch here
+# with the tag (7.3.0). This workflow tags the head of the branch of that major (main for 7,
+# v6 for 6) as v7.3.0. A tag that exists already is left as it is: a setup once released does
+# not move. Run it by hand ("Run workflow") with a version to catch up on a release.
+#
+# GITHUB_TOKEN creates the tag: it is this repository's own. The dispatch comes from the
+# ansibleforms-release GitHub App of the app's repository.
+
+on:
+  repository_dispatch:
+    types: [app-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'AnsibleForms version to tag this repository for, e.g. 7.3.0'
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tag-app-release
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    name: Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag the branch of the release's major
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RAW: ${{ github.event.client_payload.tag || inputs.version }}
+        run: |
+          set -euo pipefail
+          version="${RAW#v}"
+          # final releases only: a release candidate gets no tag
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::'$RAW' is not a release version (x.y.z)."; exit 1
+          fi
+          tag="v$version"
+          major="${version%%.*}"
+          # the branch of each major: main for the current one, v<major> for an older line
+          branch=main
+          if gh api "repos/${GITHUB_REPOSITORY}/branches/v${major}" >/dev/null 2>&1; then
+            branch="v${major}"
+          fi
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${tag}" >/dev/null 2>&1; then
+            echo "$tag exists already: left as it is"
+            exit 0
+          fi
+          sha="$(gh api "repos/${GITHUB_REPOSITORY}/branches/${branch}" --jq .commit.sha)"
+          gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/${tag}" -f sha="$sha" >/dev/null
+          echo "Tagged $tag on $branch ($sha)"
