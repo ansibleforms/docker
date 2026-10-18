@@ -105,6 +105,9 @@ services:
       - HTTPS=0
       - LOG_LEVEL=$LOG_LEVEL
       - LOG_CONSOLE_LEVEL=$LOG_CONSOLE_LEVEL
+      - LOG_TZ=${LOG_TZ:-UTC}
+      # The playbook output it stores per stream, in bytes (read by the RTE, not the app)
+      - PROCESS_MAX_BUFFER=${PROCESS_MAX_BUFFER:-52428800}
       # The libraries the ansibleforms_pip_install playbook installs into the persistent folder
       - PYTHONPATH=/app/dist/persistent/python/lib
     volumes:
