@@ -1,5 +1,8 @@
 version: 2
 
+# Every pending update gets its pull request at once (open-pull-requests-limit: 100 on each
+# entry, as Dependabot has no unlimited value), instead of five at a time per entry.
+
 # Keeps the images in docker-compose.yml and the workflow actions up to date, on main
 # (AnsibleForms 7) and on the v6 branch (AnsibleForms 6). Updates are never grouped : every image gets its own pull
 # request, so each one can be reviewed and reverted on its own.
@@ -10,6 +13,7 @@ version: 2
 
 updates:
   - package-ecosystem: docker-compose
+    open-pull-requests-limit: 100
     directory: /
     schedule:
       interval: weekly
@@ -23,6 +27,8 @@ updates:
         update-types: ['version-update:semver-major', 'version-update:semver-minor']
 
   - package-ecosystem: docker-compose
+
+    open-pull-requests-limit: 100
     directory: /
     target-branch: v6
     schedule:
@@ -42,6 +48,7 @@ updates:
   # Action majors are taken : CI starts the whole stack on every pull request, so a
   # breaking action fails there before it merges.
   - package-ecosystem: github-actions
+    open-pull-requests-limit: 100
     directory: /
     schedule:
       interval: weekly
@@ -49,6 +56,8 @@ updates:
       prefix: ci
 
   - package-ecosystem: github-actions
+
+    open-pull-requests-limit: 100
     directory: /
     target-branch: v6
     schedule:
