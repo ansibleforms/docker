@@ -21,7 +21,7 @@ updates:
       prefix: build
       include: scope
     ignore:
-      # MySQL stays on its LTS line (8.4) : its patches only. Dependabot cannot tell an LTS
+      # MySQL stays on its LTS line (9.7) : its patches only. Dependabot cannot tell an LTS
       # release from an innovation one, so moving to the next LTS is done by hand
       - dependency-name: 'mysql'
         update-types: ['version-update:semver-major', 'version-update:semver-minor']
@@ -40,8 +40,8 @@ updates:
     ignore:
       - dependency-name: 'ansibleforms/ansibleforms'
         update-types: ['version-update:semver-major']
-      # MySQL stays on its LTS line (8.4) : its patches only. Dependabot cannot tell an LTS
-      # release from an innovation one, so moving to the next LTS is done by hand
+      # MySQL stays on its LTS line (8.4 on v6) : its patches only. Dependabot cannot tell an
+      # LTS release from an innovation one, so moving to the next LTS is done by hand
       - dependency-name: 'mysql'
         update-types: ['version-update:semver-major', 'version-update:semver-minor']
 

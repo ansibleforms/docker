@@ -61,6 +61,23 @@ docker compose exec mysqldb mysql -uroot -p -e "CREATE USER 'ansibleforms'@'%' I
   GRANT ALL PRIVILEGES ON AnsibleForms.* TO 'ansibleforms'@'%';"
 ```
 
+### MySQL 9.7 LTS
+
+`main` runs MySQL 9.7, the LTS that follows 8.4; the `v6` branch stays on 8.4. A setup on 8.4 upgrades in place on its
+first start with 9.7, as MySQL supports moving to the next LTS, once these steps are done while it still runs 8.4.
+
+1. Back up the database (`data/mysql/db`), as before any upgrade.
+2. List the users still signing in with `mysql_native_password`, which MySQL 9 no longer has, and move each of them to
+   `caching_sha2_password` with its own password:
+
+   ```bash
+   docker compose exec mysqldb mysql -uroot -p -e "SELECT user, host FROM mysql.user WHERE plugin='mysql_native_password';"
+   docker compose exec mysqldb mysql -uroot -p -e "ALTER USER '<user>'@'<host>' IDENTIFIED WITH caching_sha2_password BY '<its password>';"
+   ```
+
+3. Remove the line `mysql_native_password=ON` from `data/mysql/my.cnf`: MySQL 9 refuses to start with it.
+4. Pull this version of the setup and start it again: `docker compose pull && docker compose up -d`.
+
 ## Running playbooks
 
 AnsibleForms 7 runs no playbook in the app: the `rte` container runs them, from
