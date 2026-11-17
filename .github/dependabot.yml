@@ -25,6 +25,10 @@ updates:
     commit-message:
       prefix: build
       include: scope
+    # the v6 branch runs AnsibleForms 6 : never its next major
+    ignore:
+      - dependency-name: 'ansibleforms/ansibleforms'
+        update-types: ['version-update:semver-major']
 
   # Action majors are taken : CI starts the whole stack on every pull request, so a
   # breaking action fails there before it merges.
