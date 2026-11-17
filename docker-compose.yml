@@ -1,7 +1,7 @@
 services:
   # MySql Server
   mysqldb:
-    image: mysql:8.4.13
+    image: mysql:9.7.4
     container_name: af_db
     restart: unless-stopped
     # load extra environment variables from file
