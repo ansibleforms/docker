@@ -31,7 +31,7 @@ services:
     depends_on:
       mysqldb:
         condition: service_healthy
-    image: ghcr.io/ansibleforms/ansibleforms:6
+    image: ghcr.io/ansibleforms/ansibleforms:7
     container_name: af_app
     restart: unless-stopped
     ports:
