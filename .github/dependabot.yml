@@ -4,9 +4,9 @@ version: 2
 # (AnsibleForms 7) and on the v6 branch (AnsibleForms 6). Updates are never grouped : every image gets its own pull
 # request, so each one can be reviewed and reverted on its own.
 #
-# Image major versions are proposed too, each read before merging: a new AnsibleForms major
-# may need its own branch setup, and a MySQL major (8.4 LTS to 9.x) is a database upgrade
-# to plan before its pull request is merged.
+# Image major versions are proposed too, each read before merging, but for two : MySQL stays
+# on its LTS line (patches only, the next LTS taken by hand) and the v6 branch keeps
+# AnsibleForms 6.
 
 updates:
   - package-ecosystem: docker-compose
@@ -16,6 +16,11 @@ updates:
     commit-message:
       prefix: build
       include: scope
+    ignore:
+      # MySQL stays on its LTS line (8.4) : its patches only. Dependabot cannot tell an LTS
+      # release from an innovation one, so moving to the next LTS is done by hand
+      - dependency-name: 'mysql'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
 
   - package-ecosystem: docker-compose
     directory: /
@@ -29,6 +34,10 @@ updates:
     ignore:
       - dependency-name: 'ansibleforms/ansibleforms'
         update-types: ['version-update:semver-major']
+      # MySQL stays on its LTS line (8.4) : its patches only. Dependabot cannot tell an LTS
+      # release from an innovation one, so moving to the next LTS is done by hand
+      - dependency-name: 'mysql'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
 
   # Action majors are taken : CI starts the whole stack on every pull request, so a
   # breaking action fails there before it merges.
