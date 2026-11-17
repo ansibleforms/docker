@@ -4,9 +4,9 @@ version: 2
 # (AnsibleForms 7) and on the v6 branch (AnsibleForms 6). Updates are never grouped : every image gets its own pull
 # request, so each one can be reviewed and reverted on its own.
 #
-# Image major versions are ignored on purpose. A new AnsibleForms major gets its own branch
-# setup rather than an image bump, and a MySQL major (8.4 LTS to 9.x) is a database
-# upgrade to plan, not a routine pull request.
+# Image major versions are proposed too, each read before merging: a new AnsibleForms major
+# may need its own branch setup, and a MySQL major (8.4 LTS to 9.x) is a database upgrade
+# to plan before its pull request is merged.
 
 updates:
   - package-ecosystem: docker-compose
@@ -16,9 +16,6 @@ updates:
     commit-message:
       prefix: build
       include: scope
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
 
   - package-ecosystem: docker-compose
     directory: /
@@ -28,9 +25,6 @@ updates:
     commit-message:
       prefix: build
       include: scope
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
 
   # Action majors are taken : CI starts the whole stack on every pull request, so a
   # breaking action fails there before it merges.
